@@ -1,5 +1,5 @@
 //
-//  MealDetailsMapper.swift
+//  MealDetailsMapperTests.swift
 //  RecipesApp
 //
 //  Created by gabriela.leal on 11/10/26.
