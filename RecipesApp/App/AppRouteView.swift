@@ -8,8 +8,26 @@
 import SwiftUI
 
 struct AppRouteView: View {
+    
+    private static let apiKey: String? = {
+        let key = Bundle.main.object(forInfoDictionaryKey: "AnthropicAPIKey") as? String
+        return key?.isEmpty == false ? key : nil
+    }()
+    
+    private static let translatorRecipe: RecipeTranslator? = (apiKey)
+        .flatMap { $0.isEmpty ? nil : ClaudeRecipeTranslator(apiKey: $0) }
+    
+    private static let translatorCategory: CategoryTranslator? = (apiKey)
+        .flatMap { $0.isEmpty ? nil : ClaudeCategoryTranslator(apiKey: $0) }
+    
     @State private var router = Router()
-    @State private var categoryViewModel = CategoryListViewModel(repository: RemoteMealCategoryRepository(), analytics: ConsoleAnalyticsTracker())
+    @State private var categoryViewModel = CategoryListViewModel(
+        repository: RemoteMealCategoryRepository(),
+        analytics: ConsoleAnalyticsTracker(),
+        translator: Self.translatorCategory
+    )
+    
+    
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -35,7 +53,8 @@ struct AppRouteView: View {
                             repository: RemoteMealDetailRepository(),
                             id: id,
                             analytics: ConsoleAnalyticsTracker(),
-                            experiment: LocalExperimentProvider()
+                            experiment: LocalExperimentProvider(),
+                            translator: Self.translatorRecipe
                         )
                     )
 

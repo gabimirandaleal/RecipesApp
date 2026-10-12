@@ -41,7 +41,6 @@ struct MealMapperTests {
             }
             """)
         let meal = try #require(MealMapper.map(dto))
-        print("aqui meal: \(meal)")
         #expect(meal.area == "Brazil")
     }
 }

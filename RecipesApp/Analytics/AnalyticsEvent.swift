@@ -14,7 +14,7 @@ enum AnalyticsEvent: Equatable, Sendable {
     var name: String {
         switch self {
         case .categorySelected:
-            return "category_elected"
+            return "category_selected"
         case .recipeDetailViewed:
             return "recipe_detail_viewed"
         case .youtubeLinkTapped:

@@ -20,29 +20,60 @@ final class CategoryListViewModel {
     }
     
     private(set) var state: State = .idle
-    var query: String = ""
+    private var originalList: [MealCategory] = []
+
     
     private let repository: MealCategoryRepository
     private let analytics: AnalyticsTracker
     
-    init(repository: MealCategoryRepository, analytics: AnalyticsTracker) {
+    private let translator: CategoryTranslator?
+    private let language: String
+    
+    init(
+        repository: MealCategoryRepository,
+        analytics: AnalyticsTracker,
+        translator: CategoryTranslator?,
+        language: String = Bundle.main.preferredLocalizations.first ?? "en"
+    ) {
         self.repository = repository
         self.analytics = analytics
+        self.translator = translator
+        self.language = language
     }
     
-    func searchCategory() async {
-        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        let start = Date()
+    func loadIfNeeded() async {
+        guard case .idle = state else { return }
+        await searchCategory()
+    }
+    
+    func searchCategory(value: String = "") async {
+        let term = value.trimmingCharacters(in: .whitespacesAndNewlines)
         state = .loading
+        
         do {
             let mealsCategory = try await repository.searchCategory(query: term)
-            state = mealsCategory.isEmpty ? .empty : .success(mealsCategory)
+            self.originalList = mealsCategory
+            if let translator, !language.hasPrefix("en") {
+                do {
+                    let translated = try await translator.translate(mealsCategory, to: language)
+                    state = .success(translated)
+                } catch {
+                    state = .success(mealsCategory)
+                }
+            } else {
+                state = mealsCategory.isEmpty ? .empty : .success(mealsCategory)
+            }
         } catch {
-            state = .error("Could not fetch the categories. Please try again.")
+            state = .error(String(localized: "Could not fetch this recipe. Please try again."))
         }
     }
     
     func categorySelected(category: String) {
         analytics.track(.categorySelected(category))
+    }
+    
+    func returnOriginalCategory(index: Int) -> String {
+        if originalList.isEmpty { return "" }
+        else { return originalList[index].name }
     }
 }

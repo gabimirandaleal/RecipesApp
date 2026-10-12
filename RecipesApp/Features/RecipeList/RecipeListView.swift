@@ -18,9 +18,9 @@ struct RecipeListView: View {
     
     var body: some View {
         content
-            .navigationTitle("Recipe")
+            .navigationTitle("Recipes")
             .task {
-                await viewModel.search()
+                await viewModel.loadIfNeeded()
             }
     }
     

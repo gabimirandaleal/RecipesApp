@@ -29,15 +29,19 @@ final class RecipeListViewModel {
         self.categoryName = categoryName
     }
     
+    func loadIfNeeded() async {
+        guard case .idle = state else { return }
+        await search()
+    }
+    
     func search() async {
         let term = categoryName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let start = Date()
         state = .loading
         do {
             let meals = try await repository.searchMeals(query: term)
             state = meals.isEmpty ? .empty : .success(meals)
         } catch {
-            state = .error("Could not fetch the recipes for this category. Please try again.")
+            state = .error(String(localized: "Could not fetch the recipes for this category. Please try again."))
         }
     }
 }

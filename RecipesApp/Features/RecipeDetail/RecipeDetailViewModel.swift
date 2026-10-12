@@ -26,31 +26,52 @@ final class RecipeDetailViewModel {
     private let analytics: AnalyticsTracker
     private let youtubeVariant: Variant
     
+    private let translator: RecipeTranslator?
+    private let language: String
+    
     init(
         repository: MealDetailRepository,
         id: String,
         analytics: AnalyticsTracker,
-        experiment: ExperimentProvider
+        experiment: ExperimentProvider,
+        translator: RecipeTranslator?,
+        language: String = Bundle.main.preferredLocalizations.first ?? "en"
     ) {
         self.repository = repository
         self.id = id
         self.analytics = analytics
         self.youtubeVariant = experiment.variant(for: .youtubeButtonPosition)
+        self.translator = translator
+        self.language = language
     }
     
     var showsYoutubeOnTop: Bool {
         youtubeVariant == .treatment
     }
     
+    func loadIfNeeded() async {
+        guard case .idle = state else { return }
+        await search()
+    }
+    
     func search() async {
         let term = id.trimmingCharacters(in: .whitespacesAndNewlines)
-        let start = Date()
         state = .loading
         do {
             let meals = try await repository.searchRecipe(id: term)
-            state = meals.isEmpty ? .empty : .success(meals)
+
+            if let recipe = meals.first, let translator, !language.hasPrefix("en") {
+                do {
+                    let translated = try await translator.translate(recipe, to: language)
+                    state = .success([translated])
+                } catch {
+                    state = .success([recipe])
+                }
+            } else {
+                state = meals.isEmpty ? .empty : .success(meals)
+            }
         } catch {
-            state = .error("Could not fetch this recipe. Please try again.")
+            state = .error(String(localized: "Could not fetch this recipe. Please try again."))
         }
     }
     

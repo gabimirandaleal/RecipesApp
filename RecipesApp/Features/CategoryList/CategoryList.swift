@@ -19,10 +19,10 @@ struct CategoryList: View {
     var body: some View {
         content
             .navigationTitle("Categories")
-            .task(id: viewModel.query) {
+            .task {
                 try? await Task.sleep(for: .milliseconds(400))
                 guard !Task.isCancelled else { return }
-                await viewModel.searchCategory()
+                await viewModel.loadIfNeeded()
             }
     }
     
@@ -30,12 +30,14 @@ struct CategoryList: View {
     private var content: some View {
         switch viewModel.state {
         case .idle, .loading: ProgressView()
-        case .empty: ContentUnavailableView.search(text: viewModel.query)
+        case .empty: ContentUnavailableView {
+            Label("No categories available.", systemImage: "exclamationmark.circle")
+        }
         case .success(let categories):
-            List(categories) { category in
+            List(Array(categories.enumerated()), id: \.offset) { index, category in
                 Button {
                     viewModel.categorySelected(category: category.name)
-                    goRecipeList(category.name)
+                    goRecipeList(viewModel.returnOriginalCategory(index: index))
                 } label: {
                     HStack(spacing: 12) {
                         AsyncImage(url: category.imageURL) { image in
@@ -80,7 +82,8 @@ struct CategoryList: View {
     CategoryList(
         viewModel: .init(
             repository: RemoteMealCategoryRepository(),
-            analytics: ConsoleAnalyticsTracker()
+            analytics: ConsoleAnalyticsTracker(),
+            translator: ClaudeCategoryTranslator(apiKey: "")
         ),
         goRecipeList: { _ in }
     )

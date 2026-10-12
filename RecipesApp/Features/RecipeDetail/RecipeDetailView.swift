@@ -17,9 +17,9 @@ struct RecipeDetailView: View {
     
     var body: some View {
         content
-            .navigationTitle("Details recipe")
+            .navigationTitle("Recipe Details")
             .task {
-                await viewModel.search()
+                await viewModel.loadIfNeeded()
             }
             .onAppear {
                 viewModel.screenAppered()
@@ -116,7 +116,8 @@ struct RecipeDetailView: View {
             repository: RemoteMealDetailRepository(),
             id: "",
             analytics: ConsoleAnalyticsTracker(),
-            experiment: LocalExperimentProvider()
+            experiment: LocalExperimentProvider(),
+            translator: ClaudeRecipeTranslator(apiKey: "")
         )
     )
 }
