@@ -27,7 +27,7 @@ struct AppRouteView: View {
         translator: Self.translatorCategory
     )
     
-    
+    private static let experiments = LocalExperimentProvider()
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -61,5 +61,8 @@ struct AppRouteView: View {
                 }
             }
         }
+        #if DEBUG
+        .debugMenu(experiments: Self.experiments)
+        #endif
     }
 }

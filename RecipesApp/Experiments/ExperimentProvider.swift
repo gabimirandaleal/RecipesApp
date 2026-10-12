@@ -30,4 +30,16 @@ final class LocalExperimentProvider: ExperimentProvider {
         defaults.set(variant.rawValue, forKey: key)
         return variant
     }
+    
+    func setVariant(_ variant: Variant, for experiment: Experiment) {
+        defaults.set(variant.rawValue, forKey: key(for: experiment))
+    }
+    
+    func reset(_ experiment: Experiment) {
+        defaults.removeObject(forKey: key(for: experiment))
+    }
+    
+    func key(for experiment: Experiment) -> String {
+        "experiment.\(experiment.rawValue)"
+    }
 }
