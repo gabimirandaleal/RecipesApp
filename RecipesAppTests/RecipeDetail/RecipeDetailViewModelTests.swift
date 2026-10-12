@@ -30,16 +30,22 @@ struct RecipesDetailsViewModelTests {
     func makeSut(
         repository: MockMealDetailsRepository,
         analytics: SpyAnalyticsTracker,
-        experiment: LocalExperimentProvider
+        experiment: StubExperimentProvider = StubExperimentProvider(variant: .control)
     ) -> RecipeDetailViewModel {
-        .init(repository: repository, id: "teste", analytics: SpyAnalyticsTracker(), experiment: LocalExperimentProvider())
+        .init(
+            repository: repository,
+            id: "teste",
+            analytics: analytics,
+            experiment: experiment,
+            translator: ClaudeRecipeTranslator(apiKey: ""),
+            language: "en"
+        )
     }
     
     @Test
     func showsMealsOnSuccess() async {
         let spy = SpyAnalyticsTracker()
-        let experiment = LocalExperimentProvider()
-        let sut = makeSut(repository: MockMealDetailsRepository(result: .success([flan])), analytics: spy, experiment: experiment)
+        let sut = makeSut(repository: MockMealDetailsRepository(result: .success([flan])), analytics: spy)
         await sut.search()
         #expect(sut.state == .success([flan]))
     }
@@ -48,7 +54,7 @@ struct RecipesDetailsViewModelTests {
     func showsEmptyWhenThereAreNoMeals() async {
         let spy = SpyAnalyticsTracker()
         let experiment = LocalExperimentProvider()
-        let sut = makeSut(repository: MockMealDetailsRepository(result: .success([])), analytics: spy, experiment: experiment)
+        let sut = makeSut(repository: MockMealDetailsRepository(result: .success([])), analytics: spy)
         await sut.search()
         #expect(sut.state == .empty)
     }
@@ -57,14 +63,14 @@ struct RecipesDetailsViewModelTests {
     func showsErrorWhenRepositoryFails() async {
         let spy = SpyAnalyticsTracker()
         let experiment = LocalExperimentProvider()
-        let sut = makeSut(repository: MockMealDetailsRepository(result: .failure(URLError(.notConnectedToInternet))), analytics: spy, experiment: experiment)
+        let sut = makeSut(repository: MockMealDetailsRepository(result: .failure(URLError(.notConnectedToInternet))), analytics: spy)
         await sut.search()
-        #expect(sut.state == .error("Could not fetch this recipe. Please try again."))
+        #expect(sut.state == .error(String(localized: "Could not fetch this recipe. Please try again.")))
     }
     
     @Test
     func tracksYoutubeTap() async {
-        let experiment = LocalExperimentProvider()
+        let experiment = StubExperimentProvider(variant: .control)
         let spy = SpyAnalyticsTracker()
         let sut = makeSut(repository: MockMealDetailsRepository(result: .success([flan])), analytics: spy, experiment: experiment)
         sut.youtubeLinkTapped()
@@ -73,10 +79,10 @@ struct RecipesDetailsViewModelTests {
     
     @Test
     func tracksRecipeOpened() async {
-        let experiment = LocalExperimentProvider()
+        let experiment = StubExperimentProvider(variant: .control)
         let spy = SpyAnalyticsTracker()
         let sut = makeSut(repository: MockMealDetailsRepository(result: .success([flan])), analytics: spy, experiment: experiment)
         sut.screenAppered()
-        #expect(spy.events == [.recipeDetailViewed("teste")])
+        #expect(spy.events == [.recipeDetailViewed("teste"), .experimentExposed(experiment: .youtubeButtonPosition, variant: .control)])
     }
 }

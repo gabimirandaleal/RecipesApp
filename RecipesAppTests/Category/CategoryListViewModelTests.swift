@@ -15,29 +15,46 @@ struct CategoryListViewModelTests {
     
     @Test
     func showsMealsOnSuccess() async {
-        let sut = CategoryListViewModel(repository: MockCategoryRepository(result: .success([flan])), analytics: SpyAnalyticsTracker())
+        let sut = CategoryListViewModel(
+            repository: MockCategoryRepository(result: .success([flan])),
+            analytics: SpyAnalyticsTracker(),
+            translator: ClaudeCategoryTranslator(apiKey: "")
+        )
         await sut.searchCategory()
         #expect(sut.state == .success([flan]))
     }
     
     @Test
     func showsEmptyWhenThereAreNoMeals() async {
-        let sut = CategoryListViewModel(repository: MockCategoryRepository(result: .success([])), analytics: SpyAnalyticsTracker())
+        let sut = CategoryListViewModel(
+            repository: MockCategoryRepository(result: .success([])),
+            analytics: SpyAnalyticsTracker(),
+            translator: ClaudeCategoryTranslator(apiKey: "")
+        )
         await sut.searchCategory()
         #expect(sut.state == .empty)
     }
     
     @Test
     func showsErrorWhenRepositoryFails() async {
-        let sut = CategoryListViewModel(repository: MockCategoryRepository(result: .failure(URLError(.notConnectedToInternet))), analytics: SpyAnalyticsTracker())
+        let sut = CategoryListViewModel(
+            repository: MockCategoryRepository(result: .failure(URLError(.notConnectedToInternet))),
+            analytics: SpyAnalyticsTracker(),
+            translator: ClaudeCategoryTranslator(apiKey: ""),
+            language: "en"
+        )
         await sut.searchCategory()
-        #expect(sut.state == .error("Could not fetch the categories. Please try again."))
+        #expect(sut.state == .error(String(localized: "Could not fetch this recipe. Please try again.")))
     }
     
     @Test
     func trackCategoryTapped() async {
         let spy = SpyAnalyticsTracker()
-        let sut = CategoryListViewModel(repository: MockCategoryRepository(result: .failure(URLError(.notConnectedToInternet))), analytics: spy)
+        let sut = CategoryListViewModel(
+            repository: MockCategoryRepository(result: .failure(URLError(.notConnectedToInternet))),
+            analytics: spy,
+            translator: ClaudeCategoryTranslator(apiKey: "")
+        )
         sut.categorySelected(category: "teste")
         #expect(spy.events == [.categorySelected("teste")])
     }

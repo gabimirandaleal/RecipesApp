@@ -56,9 +56,9 @@ final class CategoryListViewModel {
             if let translator, !language.hasPrefix("en") {
                 do {
                     let translated = try await translator.translate(mealsCategory, to: language)
-                    state = .success(translated)
+                    state = translated.isEmpty ? .empty : .success(translated)
                 } catch {
-                    state = .success(mealsCategory)
+                    state = mealsCategory.isEmpty ? .empty : .success(mealsCategory)
                 }
             } else {
                 state = mealsCategory.isEmpty ? .empty : .success(mealsCategory)

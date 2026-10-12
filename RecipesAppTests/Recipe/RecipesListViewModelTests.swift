@@ -31,6 +31,6 @@ struct RecipesListViewModelTests {
     func showsErrorWhenRepositoryFails() async {
         let sut = RecipeListViewModel(repository: MockMealRepository(result: .failure(URLError(.notConnectedToInternet))), categoryName: "teste")
         await sut.search()
-        #expect(sut.state == .error("Could not fetch the recipes for this category. Please try again."))
+        #expect(sut.state == .error(String(localized: "Could not fetch the recipes for this category. Please try again.")))
     }
 }

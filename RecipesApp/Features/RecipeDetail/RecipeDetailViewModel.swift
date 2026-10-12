@@ -63,9 +63,13 @@ final class RecipeDetailViewModel {
             if let recipe = meals.first, let translator, !language.hasPrefix("en") {
                 do {
                     let translated = try await translator.translate(recipe, to: language)
-                    state = .success([translated])
+                    if !translated.id.isEmpty, !translated.name.isEmpty {
+                        state = .success([translated])
+                    } else {
+                        state = .empty
+                    }
                 } catch {
-                    state = .success([recipe])
+                    state = meals.isEmpty ? .empty : .success(meals)
                 }
             } else {
                 state = meals.isEmpty ? .empty : .success(meals)
