@@ -7,9 +7,13 @@ App iOS em SwiftUI para explorar receitas por categoria, consumindo a API públi
 <details>
   <summary>Visualizar</summary>
 
-  | App rodando | Experimento botão YouTube |
-  |--------------|--------------|
-  | <video src="https://github.com/user-attachments/assets/50c9756e-c248-454c-8a22-c229ba196e38"> | <video src="https://github.com/user-attachments/assets/7c716ce4-8ba3-4180-8935-19830fcbe1d1"> |
+  | App rodando PT-BR | App rodando EN | App rodando (erros/loading) | Experimento botão YouTube |
+  |-------------|-------------|--------------|--------------|
+  | <video src="https://github.com/user-attachments/assets/850fa304-35bb-4273-a008-1952a92ce460"> | <video src="https://github.com/user-attachments/assets/d37b5193-a2b5-4b0d-88a1-40e0e14f371d"> | <video src="https://github.com/user-attachments/assets/50c9756e-c248-454c-8a22-c229ba196e38"> | <video src="https://github.com/user-attachments/assets/7c716ce4-8ba3-4180-8935-19830fcbe1d1"> |
+
+
+
+
 
 </details>
 
