@@ -24,11 +24,22 @@ final class RecipeDetailViewModel {
     private(set) var id: String
     private let repository: MealDetailRepository
     private let analytics: AnalyticsTracker
+    private let youtubeVariant: Variant
     
-    init(repository: MealDetailRepository, id: String, analytics: AnalyticsTracker) {
+    init(
+        repository: MealDetailRepository,
+        id: String,
+        analytics: AnalyticsTracker,
+        experiment: ExperimentProvider
+    ) {
         self.repository = repository
         self.id = id
         self.analytics = analytics
+        self.youtubeVariant = experiment.variant(for: .youtubeButtonPosition)
+    }
+    
+    var showsYoutubeOnTop: Bool {
+        youtubeVariant == .treatment
     }
     
     func search() async {
@@ -49,5 +60,6 @@ final class RecipeDetailViewModel {
     
     func screenAppered() {
         analytics.track(.recipeDetailViewed(id))
+        analytics.track(.experimentExposed(experiment: .youtubeButtonPosition, variant: youtubeVariant))
     }
 }

@@ -48,6 +48,9 @@ struct RecipeDetailView: View {
     private func recipeList(_ meals: [MealDetail]) -> some View {
         List(meals) { meal in
             VStack(alignment: .leading) {
+                if viewModel.showsYoutubeOnTop, let link = meal.videoURL {
+                    makeButton(link: link)
+                }
                 VStack(alignment: .center, spacing: 12) {
                     AsyncImage(url: meal.imageURL) { image in
                         image
@@ -80,25 +83,29 @@ struct RecipeDetailView: View {
                     }
                 }
             }
-            if let link = meal.videoURL {
-                Button {
-                    viewModel.youtubeLinkTapped()
-                    openURL(link)
-                } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "play.fill")
-                        Text("Watch on YouTube")
-                            .fontWeight(.semibold)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Color.red)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .padding(.horizontal)
+            if !viewModel.showsYoutubeOnTop, let link = meal.videoURL {
+                makeButton(link: link)
             }
         }
+    }
+    
+    private func makeButton(link: URL) -> some View {
+        Button {
+            viewModel.youtubeLinkTapped()
+            openURL(link)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "play.fill")
+                Text("Watch on YouTube")
+                    .fontWeight(.semibold)
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(Color.red)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .padding(.horizontal)
     }
 
 }
@@ -108,7 +115,8 @@ struct RecipeDetailView: View {
         viewModel: .init(
             repository: RemoteMealDetailRepository(),
             id: "",
-            analytics: ConsoleAnalyticsTracker()
+            analytics: ConsoleAnalyticsTracker(),
+            experiment: LocalExperimentProvider()
         )
     )
 }

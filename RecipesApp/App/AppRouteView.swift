@@ -34,7 +34,8 @@ struct AppRouteView: View {
                         viewModel: RecipeDetailViewModel(
                             repository: RemoteMealDetailRepository(),
                             id: id,
-                            analytics: ConsoleAnalyticsTracker()
+                            analytics: ConsoleAnalyticsTracker(),
+                            experiment: LocalExperimentProvider()
                         )
                     )
 
