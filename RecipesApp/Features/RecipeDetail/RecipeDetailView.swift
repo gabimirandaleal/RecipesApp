@@ -41,6 +41,12 @@ struct RecipeDetailView: View {
                 Label("Something went wrong", systemImage: "wifi.exclamationmark")
             } description: {
                 Text(message)
+            } actions: {
+                Button("Try again") {
+                    Task {
+                        await viewModel.search()
+                    }
+                }
             }
         }
     }
