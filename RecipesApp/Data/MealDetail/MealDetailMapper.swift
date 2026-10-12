@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum MealMapper {
-    static func map(_ dto: MealDTO) -> Meal? {
+enum MealDetailMapper {
+    static func map(_ dto: MealDetailDTO) -> MealDetail? {
         guard let id = dto.idMeal, let name = dto.strMeal else { return nil }
 
         let ingredients = zip(dto.ingredients, dto.measures).compactMap { (ingredient, measure) -> Ingredient? in
@@ -21,7 +21,7 @@ enum MealMapper {
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty } ?? []
 
-        return Meal(
+        return MealDetail(
             id: id,
             name: name,
             imageURL: URL(string:dto.strMealThumb ?? "") ,

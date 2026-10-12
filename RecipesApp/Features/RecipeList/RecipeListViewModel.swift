@@ -19,23 +19,25 @@ final class RecipeListViewModel {
         case error(String)
     }
     
+
     private(set) var state: State = .idle
-    var query: String = ""
-    
+    private(set) var categoryName: String
     private let repository: MealRepository
     
-    init(repository: MealRepository) {
+    init(repository: MealRepository, categoryName: String) {
         self.repository = repository
+        self.categoryName = categoryName
     }
     
     func search() async {
-        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let term = categoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let start = Date()
         state = .loading
         do {
             let meals = try await repository.searchMeals(query: term)
             state = meals.isEmpty ? .empty : .success(meals)
         } catch {
-            state = .error("Não foi possível buscar receitas. Tente novamente.")
+            state = .error("Could not fetch the recipes for this category. Please try again.")
         }
     }
 }

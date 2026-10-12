@@ -15,10 +15,10 @@ struct RemoteMealRepository: MealRepository {
     }
     
     func searchMeals(query: String) async throws -> [Meal] {
-        guard var components = URLComponents(string: "https://www.themealdb.com/api/json/v1/1/search.php") else {
+        guard var components = URLComponents(string: "https://www.themealdb.com/api/json/v1/1/filter.php") else {
             throw URLError(.badURL)
         }
-        components.queryItems = [URLQueryItem(name: "s", value: query)]
+        components.queryItems = [URLQueryItem(name: "c", value: query)]
         guard let url = components.url else {
             throw URLError(.badURL)
         }

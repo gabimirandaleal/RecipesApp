@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MealDTO: Decodable, Sendable {
+struct MealDetailDTO: Decodable, Sendable {
     let idMeal: String?
     let strMeal: String?
     let strMealThumb: String?
@@ -20,9 +20,18 @@ struct MealDTO: Decodable, Sendable {
     let strSource: String?
     let ingredients: [String?]
     let measures: [String?]
-    
+
     private enum CodingKeys: String, CodingKey {
-        case idMeal, strMeal, strMealThumb, strCategory, strArea, strInstructions, strYoutube, strTags, strCountry, strSource
+        case idMeal
+        case strMeal
+        case strMealThumb
+        case strCategory
+        case strArea
+        case strInstructions
+        case strYoutube
+        case strTags
+        case strCountry
+        case strSource
     }
     
     init(from decoder: any Decoder) throws {
