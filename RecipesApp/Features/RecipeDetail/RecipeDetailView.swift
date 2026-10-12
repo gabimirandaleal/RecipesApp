@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @State private var viewModel: RecipeDetailViewModel
+    @Environment(\.openURL) private var openURL
     
     init(viewModel: RecipeDetailViewModel) {
         self.viewModel = viewModel
@@ -19,6 +20,9 @@ struct RecipeDetailView: View {
             .navigationTitle("Details recipe")
             .task {
                 await viewModel.search()
+            }
+            .onAppear {
+                viewModel.screenAppered()
             }
     }
     
@@ -77,7 +81,10 @@ struct RecipeDetailView: View {
                 }
             }
             if let link = meal.videoURL {
-                Link(destination: link) {
+                Button {
+                    viewModel.youtubeLinkTapped()
+                    openURL(link)
+                } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "play.fill")
                         Text("Watch on YouTube")
@@ -97,11 +104,11 @@ struct RecipeDetailView: View {
 }
 
 #Preview {
-    RecipeListView(
+    RecipeDetailView(
         viewModel: .init(
-            repository: RemoteMealRepository(),
-            categoryName: ""
-        ),
-        goRecipeDetails: { _ in }
+            repository: RemoteMealDetailRepository(),
+            id: "",
+            analytics: ConsoleAnalyticsTracker()
+        )
     )
 }

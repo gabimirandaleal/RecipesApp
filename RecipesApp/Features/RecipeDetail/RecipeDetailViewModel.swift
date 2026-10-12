@@ -23,10 +23,12 @@ final class RecipeDetailViewModel {
     private(set) var state: State = .idle
     private(set) var id: String
     private let repository: MealDetailRepository
+    private let analytics: AnalyticsTracker
     
-    init(repository: MealDetailRepository, id: String) {
+    init(repository: MealDetailRepository, id: String, analytics: AnalyticsTracker) {
         self.repository = repository
         self.id = id
+        self.analytics = analytics
     }
     
     func search() async {
@@ -39,5 +41,13 @@ final class RecipeDetailViewModel {
         } catch {
             state = .error("Could not fetch this recipe. Please try again.")
         }
+    }
+    
+    func youtubeLinkTapped() {
+        analytics.track(.youtubeLinkTapped(id))
+    }
+    
+    func screenAppered() {
+        analytics.track(.recipeDetailViewed(id))
     }
 }

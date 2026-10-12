@@ -23,9 +23,11 @@ final class CategoryListViewModel {
     var query: String = ""
     
     private let repository: MealCategoryRepository
+    private let analytics: AnalyticsTracker
     
-    init(repository: MealCategoryRepository) {
+    init(repository: MealCategoryRepository, analytics: AnalyticsTracker) {
         self.repository = repository
+        self.analytics = analytics
     }
     
     func searchCategory() async {
@@ -38,5 +40,9 @@ final class CategoryListViewModel {
         } catch {
             state = .error("Could not fetch the categories. Please try again.")
         }
+    }
+    
+    func categorySelected(category: String) {
+        analytics.track(.categorySelected(category))
     }
 }

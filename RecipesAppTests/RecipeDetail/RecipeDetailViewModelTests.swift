@@ -29,22 +29,38 @@ struct RecipesDetailsViewModelTests {
     
     @Test
     func showsMealsOnSuccess() async {
-        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([flan])), id: "teste")
+        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([flan])), id: "teste", analytics: SpyAnalyticsTracker())
         await sut.search()
         #expect(sut.state == .success([flan]))
     }
     
     @Test
     func showsEmptyWhenThereAreNoMeals() async {
-        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([])), id: "teste")
+        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([])), id: "teste", analytics: SpyAnalyticsTracker())
         await sut.search()
         #expect(sut.state == .empty)
     }
     
     @Test
     func showsErrorWhenRepositoryFails() async {
-        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .failure(URLError(.notConnectedToInternet))), id: "teste")
+        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .failure(URLError(.notConnectedToInternet))), id: "teste", analytics: SpyAnalyticsTracker())
         await sut.search()
         #expect(sut.state == .error("Could not fetch this recipe. Please try again."))
+    }
+    
+    @Test
+    func tracksYoutubeTap() async {
+        let spy = SpyAnalyticsTracker()
+        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([flan])), id: "teste", analytics: spy)
+        sut.youtubeLinkTapped()
+        #expect(spy.events == [.youtubeLinkTapped("teste")])
+    }
+    
+    @Test
+    func tracksRecipeOpened() async {
+        let spy = SpyAnalyticsTracker()
+        let sut = RecipeDetailViewModel(repository: MockMealDetailsRepository(result: .success([flan])), id: "teste", analytics: spy)
+        sut.screenAppered()
+        #expect(spy.events == [.recipeDetailViewed("teste")])
     }
 }

@@ -60,9 +60,15 @@ struct RecipeListView: View {
                     .clipShape(Circle())
                     
                     Text(meal.name)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.tertiary)
                 }
+                .contentShape(Rectangle())
+                .foregroundStyle(.primary)
             }
-            .buttonStyle(.plain)
         }
     }
 

@@ -34,6 +34,7 @@ struct CategoryList: View {
         case .success(let categories):
             List(categories) { category in
                 Button {
+                    viewModel.categorySelected(category: category.name)
                     goRecipeList(category.name)
                 } label: {
                     HStack(spacing: 12) {
@@ -48,9 +49,15 @@ struct CategoryList: View {
                         .clipShape(Circle())
 
                         Text(category.name)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
                     }
+                    .contentShape(Rectangle())
+                    .foregroundStyle(.primary)
                 }
-                .buttonStyle(.plain)
             }
 
         case .error(let message):
@@ -73,6 +80,7 @@ struct CategoryList: View {
     CategoryList(
         viewModel: .init(
             repository: RemoteMealCategoryRepository(),
+            analytics: ConsoleAnalyticsTracker()
         ),
         goRecipeList: { _ in }
     )

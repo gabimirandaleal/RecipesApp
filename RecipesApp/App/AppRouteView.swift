@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppRouteView: View {
     @State private var router = Router()
-    @State private var categoryViewModel = CategoryListViewModel(repository: RemoteMealCategoryRepository())
+    @State private var categoryViewModel = CategoryListViewModel(repository: RemoteMealCategoryRepository(), analytics: ConsoleAnalyticsTracker())
     
     var body: some View {
         NavigationStack(path: $router.path) {
@@ -33,7 +33,8 @@ struct AppRouteView: View {
                     RecipeDetailView(
                         viewModel: RecipeDetailViewModel(
                             repository: RemoteMealDetailRepository(),
-                            id: id
+                            id: id,
+                            analytics: ConsoleAnalyticsTracker()
                         )
                     )
 
