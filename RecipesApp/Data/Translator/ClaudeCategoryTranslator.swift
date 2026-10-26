@@ -29,11 +29,14 @@ struct ClaudeCategoryTranslator: CategoryTranslator {
             model: "claude-haiku-5-5",
             max_tokens: 4096,
             system: """
-                You translate cooking recipes into the language with code \(language). \
-                        Use natural cooking terms and local measurement names. \
-                        Keep every "id" value exactly as received and translate only "name". \
-                        Reply ONLY with JSON in exactly the same structure you receive, no extra text.
-            """,
+                You are a professional culinary translator. Translate the name of each recipe category \
+                into the language with code \(language), using the term a native home cook would use \
+                (e.g. pt-BR: "Seafood" → "Frutos do mar", "Side" → "Acompanhamento").
+
+                Keep every "id" value exactly as received and translate only "name".
+
+                Reply ONLY with JSON in exactly the same structure you receive, no extra text.
+                """,
             messages: [.init(role: "user", content: payloadJSON)]
             )
         )

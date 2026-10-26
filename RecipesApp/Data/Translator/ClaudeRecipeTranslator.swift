@@ -31,10 +31,23 @@ struct ClaudeRecipeTranslator: RecipeTranslator {
             model: "claude-haiku-5-5",
             max_tokens: 4096,
             system: """
-                You translate cooking recipes into the language with code \(language). \
-                        Use natural cooking terms and local measurement names. \
-                        Reply ONLY with JSON in exactly the same structure you receive, no extra text.
-            """,
+                You are a professional culinary translator. Translate the recipe JSON into the language \
+                with code \(language), writing the way a native home cook would read it in a cookbook.
+
+                Ingredients:
+                - Translate each "name" together with its "measure", so the pair reads naturally as one line.
+                - Make the name agree with the quantity: use the plural when there is more than one \
+                (e.g. pt-BR: measure "2", name "Burger Buns" → measure "2", name "pães de hambúrguer").
+                - Use local unit names without changing the amounts \
+                (e.g. pt-BR: "1 cup" → "1 xícara", "2 tbs" → "2 colheres (sopa)", "1/2 tsp" → "½ colher (chá)", "pinch" → "1 pitada").
+                - Use the ingredient's common local name, not a literal translation \
+                (e.g. pt-BR: "Plain Flour" → "farinha de trigo", "Spring Onions" → "cebolinha").
+
+                Instructions: keep every step and its order; write fluent, natural sentences, without adding or removing steps.
+
+                Reply ONLY with JSON in exactly the same structure you receive, with the same number of \
+                ingredients in the same order, no extra text.
+                """,
             messages: [.init(role: "user", content: payloadJSON)]
             )
         )
