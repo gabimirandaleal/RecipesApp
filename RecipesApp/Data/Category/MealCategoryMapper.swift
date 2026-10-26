@@ -14,6 +14,7 @@ enum MealCategoryMapper {
         return MealCategory(
             id: id,
             name: name,
+            apiName: name,
             imageURL: URL(string:dto.strCategoryThumb ?? "") ,
             description: dto.strCategoryDescription
         )

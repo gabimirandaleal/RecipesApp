@@ -20,9 +20,7 @@ final class CategoryListViewModel {
     }
     
     private(set) var state: State = .idle
-    private var originalList: [MealCategory] = []
 
-    
     private let repository: MealCategoryRepository
     private let analytics: AnalyticsTracker
     
@@ -52,7 +50,6 @@ final class CategoryListViewModel {
         
         do {
             let mealsCategory = try await repository.searchCategory(query: term)
-            self.originalList = mealsCategory
             if let translator, !language.hasPrefix("en") {
                 do {
                     let translated = try await translator.translate(mealsCategory, to: language)
@@ -64,16 +61,11 @@ final class CategoryListViewModel {
                 state = mealsCategory.isEmpty ? .empty : .success(mealsCategory)
             }
         } catch {
-            state = .error(String(localized: "Could not fetch this recipe. Please try again."))
+            state = .error(String(localized: "Could not fetch the categories. Please try again."))
         }
     }
     
     func categorySelected(category: String) {
         analytics.track(.categorySelected(category))
-    }
-    
-    func returnOriginalCategory(index: Int) -> String {
-        if originalList.isEmpty { return "" }
-        else { return originalList[index].name }
     }
 }

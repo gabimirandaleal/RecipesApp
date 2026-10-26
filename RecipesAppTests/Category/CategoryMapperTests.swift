@@ -29,4 +29,14 @@ struct CategoryMapperTests {
         """)
         #expect(MealCategoryMapper.map(dto) == nil)
     }
+
+    @Test
+    func keepsApiNameEqualToTheOriginalName() throws {
+        let dto = try decode("""
+        { "idCategory": "1", "strCategory": "Chicken" }
+        """)
+        let category = try #require(MealCategoryMapper.map(dto))
+        #expect(category.name == "Chicken")
+        #expect(category.apiName == "Chicken")
+    }
 }

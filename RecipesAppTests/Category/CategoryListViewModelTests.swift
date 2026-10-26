@@ -11,7 +11,7 @@ import Testing
 
 @MainActor
 struct CategoryListViewModelTests {
-    private let flan = MealCategory(id: "1", name: "test", imageURL: nil, description: "test description")
+    private let flan = MealCategory(id: "1", name: "test", apiName: "test", imageURL: nil, description: "test description")
     
     @Test
     func showsMealsOnSuccess() async {
@@ -44,7 +44,7 @@ struct CategoryListViewModelTests {
             language: "en"
         )
         await sut.searchCategory()
-        #expect(sut.state == .error(String(localized: "Could not fetch this recipe. Please try again.")))
+        #expect(sut.state == .error(String(localized: "Could not fetch the categories. Please try again.")))
     }
     
     @Test

@@ -34,10 +34,10 @@ struct CategoryList: View {
             Label("No categories available.", systemImage: "exclamationmark.circle")
         }
         case .success(let categories):
-            List(Array(categories.enumerated()), id: \.offset) { index, category in
+            List(categories) { category in
                 Button {
-                    viewModel.categorySelected(category: category.name)
-                    goRecipeList(viewModel.returnOriginalCategory(index: index))
+                    viewModel.categorySelected(category: category.apiName)
+                    goRecipeList(category.apiName)
                 } label: {
                     HStack(spacing: 12) {
                         AsyncImage(url: category.imageURL) { image in

@@ -15,7 +15,7 @@ struct ClaudeRecipeTranslator: RecipeTranslator {
         let payload = TranslationPayload(
             ingredients: recipe.ingredients.map { .init(name: $0.name, measure: $0.measure) },
             area: recipe.area,
-            cateogrory: recipe.category,
+            category: recipe.category,
             instructions: recipe.instructions,
             tags: recipe.tags
         )
@@ -58,7 +58,7 @@ struct ClaudeRecipeTranslator: RecipeTranslator {
             imageURL: recipe.imageURL,
             ingredients: translated.ingredients.map { Ingredient(name: $0.name, measure: $0.measure) },
             area: translated.area,
-            category: translated.cateogrory,
+            category: translated.category,
             videoURL: recipe.videoURL,
             instructions: translated.instructions,
             tags: translated.tags,
@@ -74,7 +74,7 @@ struct ClaudeRecipeTranslator: RecipeTranslator {
 
         let ingredients: [Item]
         let area: String?
-        let cateogrory: String?
+        let category: String?
         let instructions: String
         let tags: [String]
     }
